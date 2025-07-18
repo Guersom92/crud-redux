@@ -7,7 +7,7 @@ function User({ user }: { user: UserWithId }) {
   const { removeUser } = useUserActions();
   const { setForm, switchModal, setUserToEdit } = useFormActions();
 
-  const onEditUser = (user) => {
+  const onEditUser = (user: UserWithId) => {
     setForm(user.name, user.email, user.github);
     switchModal();
     setUserToEdit(user.id);
