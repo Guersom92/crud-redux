@@ -1,7 +1,17 @@
 import { TableCell, TableRow } from "flowbite-react";
-import type { UserWithId } from "../store/users/slice";
+import { type UserWithId } from "../store/users/slice";
+import { useUserActions } from "../hooks/useUserActions";
+import { useFormActions } from "../hooks/useFormActions";
 
 function User({ user }: { user: UserWithId }) {
+  const { removeUser } = useUserActions();
+  const { setForm, switchModal, setUserToEdit } = useFormActions();
+
+  const onEditUser = (user) => {
+    setForm(user.name, user.email, user.github);
+    switchModal();
+    setUserToEdit(user.id);
+  };
   return (
     <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
       <TableCell className="font-medium whitespace-nowrap text-gray-900 dark:text-white">
@@ -10,7 +20,7 @@ function User({ user }: { user: UserWithId }) {
       <TableCell>
         <div className="ite flex items-center gap-1.5">
           <img
-            className={"w-8 rounded-full"}
+            className={"aspect-square w-8 rounded-full"}
             src={`https://unavatar.io/github/${user.github}`}
             alt=""
           />
@@ -19,14 +29,14 @@ function User({ user }: { user: UserWithId }) {
       </TableCell>
       <TableCell>{user.email}</TableCell>
       <TableCell>
-        <button>
+        <button onClick={() => onEditUser(user)}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="size-6"
+            className="size-6 cursor-pointer"
           >
             <path
               strokeLinecap="round"
@@ -35,14 +45,14 @@ function User({ user }: { user: UserWithId }) {
             />
           </svg>
         </button>
-        <button>
+        <button onClick={() => removeUser(user.id)}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="size-6"
+            className="size-6 cursor-pointer"
           >
             <path
               strokeLinecap="round"
@@ -51,14 +61,6 @@ function User({ user }: { user: UserWithId }) {
             />
           </svg>
         </button>
-      </TableCell>
-      <TableCell>
-        <a
-          href="#"
-          className="text-primary-600 dark:text-primary-500 font-medium hover:underline"
-        >
-          Edit
-        </a>
       </TableCell>
     </TableRow>
   );
