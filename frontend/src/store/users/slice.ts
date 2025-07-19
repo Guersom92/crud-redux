@@ -1,4 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import userServices from "../../services/users";
+import { AppDispatch } from "..";
 
 export type UserId = string;
 
@@ -18,15 +20,14 @@ export const usersSlice = createSlice({
   name: "users",
   initialState,
   reducers: {
-    createUser: (state, action: PayloadAction<User>) => {
-      const id = crypto.randomUUID();
-      return [...state, { ...action.payload, id }];
+    addUser: (state, action: PayloadAction<UserWithId>) => {
+      return [...state, { ...action.payload }];
     },
-    deleteUserById: (state, action: PayloadAction<UserId>) => {
+    removeUser: (state, action: PayloadAction<UserId>) => {
       const id = action.payload;
       return state.filter((user) => user.id !== id);
     },
-    editUser: (state, action: PayloadAction<UserWithId>) => {
+    updateUser: (state, action: PayloadAction<UserWithId>) => {
       return state.map((user) =>
         user.id === action.payload.id ? action.payload : user,
       );
@@ -38,5 +39,25 @@ export const usersSlice = createSlice({
 });
 
 export default usersSlice.reducer;
-export const { deleteUserById, createUser, editUser, setUsers } =
-  usersSlice.actions;
+export const { removeUser, addUser, updateUser, setUsers } = usersSlice.actions;
+
+export const createUserDataBase = (content: User) => {
+  return async (dispatch: AppDispatch) => {
+    const newUser = await userServices.createNew(content);
+    dispatch(addUser(newUser));
+  };
+};
+
+export const updateUserDataBase = (userToUpdate: UserWithId) => {
+  return async (dispatch: AppDispatch) => {
+    await userServices.update(userToUpdate);
+    dispatch(updateUser(userToUpdate));
+  };
+};
+
+export const removeUserDataBase = (userToDelete: UserId) => {
+  return async (dispatch: AppDispatch) => {
+    await userServices.remove(userToDelete);
+    dispatch(removeUser(userToDelete));
+  };
+};

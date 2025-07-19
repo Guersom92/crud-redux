@@ -13,7 +13,7 @@ import { useFormActions } from "../hooks/useFormActions";
 import { useAppSelector } from "../hooks/store";
 
 export function CreateNewUser() {
-  const { addUser, modifyUser } = useUserActions();
+  const { addNewUser, modifyUser } = useUserActions();
   const { changeGithub, changeMail, changeName, resetForm, switchModal } =
     useFormActions();
   const { values, openModal, userIdToEdit } = useAppSelector(
@@ -38,7 +38,7 @@ export function CreateNewUser() {
       modifyUser({ name, email, github, id: userIdToEdit });
       return resetForm();
     }
-    addUser({ name, email, github });
+    addNewUser({ name, email, github });
     setshowErrorNotification(false);
 
     resetForm();

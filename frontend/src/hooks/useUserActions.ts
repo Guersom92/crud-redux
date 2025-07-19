@@ -1,7 +1,7 @@
 import {
-  createUser,
-  deleteUserById,
-  editUser,
+  createUserDataBase,
+  removeUserDataBase,
+  updateUserDataBase,
   type User,
   type UserId,
   type UserWithId,
@@ -10,17 +10,18 @@ import { useAppDispatch } from "./store";
 
 export const useUserActions = () => {
   const dispatch = useAppDispatch();
+
   const removeUser = (id: UserId) => {
-    dispatch(deleteUserById(id));
+    dispatch(removeUserDataBase(id));
   };
 
-  const addUser = (user: User) => {
-    dispatch(createUser(user));
+  const addNewUser = (user: User) => {
+    dispatch(createUserDataBase(user));
   };
 
   const modifyUser = (user: UserWithId) => {
-    dispatch(editUser(user));
+    dispatch(updateUserDataBase(user));
   };
 
-  return { removeUser, addUser, modifyUser };
+  return { removeUser, addNewUser, modifyUser };
 };
