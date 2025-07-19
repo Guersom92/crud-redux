@@ -1,18 +1,32 @@
 const express = require('express')
 const app = express()
+const mongoose = require('mongoose')
+require('dotenv').config()
+const User = require("./models/user")
 
 
-let users = [
-    { id: "4545", name: "guersom", email: "guersom80@gmail.com", github: "guersom92" }
-]
 
 const PORT = process.env.PORT || 3001;
 
+
+mongoose.set('strictQuery', false)
+
+mongoose.connect(process.env.MONGODB_URI).then(result => {
+    console.log('connected to MongoDB')
+})
+    .catch(error => {
+        console.log('error connecting to MongoDB:', error.message)
+    })
+
+app.use(express.static('dist'))
 app.use(express.json())
 
 app.get('/api/users', (request, response) => {
-    response.json(users)
+    User.find({}).then(users => {
+        response.json(users)
+    })
 })
+
 app.post('/api/users', (request, response) => {
     const user = request.body
 
@@ -22,16 +36,15 @@ app.post('/api/users', (request, response) => {
         })
     }
 
-    user.id = crypto.randomUUID()
-    users.push(user)
-    response.json(user)
+    const newUser = new User(user)
+    newUser.save().then(savedUser => response.json(savedUser))
 
 })
 
 app.delete('/api/users/:id', (request, response) => {
     const id = request.params.id
-    users = users.filter(user => user.id !== id)
-    response.status(204).end()
+    User.findByIdAndDelete(id).then(result => response.status(204).end())
+
 })
 
 app.put('/api/users/:id', (request, response) => {
@@ -42,10 +55,18 @@ app.put('/api/users/:id', (request, response) => {
         })
     }
     const id = request.params.id
-    users = users.map(user => user.id === id ? userToEdit : user)
 
-    response.json(users)
+    User.findById(id).then((user) => {
+        user.name = userToEdit.name
+        user.github = userToEdit.github
+        user.email = userToEdit.email
+        return user.save().then((updatedUser) => {
+            response.json(updatedUser)
+        })
+    })
 })
+
+
 
 const unknownEndpoint = (request, response) => {
     response.status(404).send({ error: 'unknown endpoint' })
