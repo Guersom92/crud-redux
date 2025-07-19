@@ -13,23 +13,15 @@ import { useFormActions } from "../hooks/useFormActions";
 import { useAppSelector } from "../hooks/store";
 
 export function CreateNewUser() {
-  const { addUser } = useUserActions();
-  const {
-    changeGithub,
-    changeMail,
-    changeName,
-    resetForm,
-    switchModal,
-    setUserToEdit,
-  } = useFormActions();
+  const { addUser, modifyUser } = useUserActions();
+  const { changeGithub, changeMail, changeName, resetForm, switchModal } =
+    useFormActions();
   const { values, openModal, userIdToEdit } = useAppSelector(
     (state) => state.form,
   );
   const [showErrorNotification, setshowErrorNotification] = useState(false);
 
   const handleClose = () => {
-    switchModal();
-    setUserToEdit("");
     resetForm();
     setshowErrorNotification(false);
   };
@@ -39,8 +31,12 @@ export function CreateNewUser() {
     const { name, email, github } = values;
 
     if (!name || !email || !github) {
-      console.log(email, name, github);
       return setshowErrorNotification(true);
+    }
+
+    if (userIdToEdit) {
+      modifyUser({ name, email, github, id: userIdToEdit });
+      return resetForm();
     }
     addUser({ name, email, github });
     setshowErrorNotification(false);
@@ -50,7 +46,9 @@ export function CreateNewUser() {
 
   return (
     <>
-      <Button onClick={switchModal}>Crea un nuevo usuario</Button>
+      <Button onClick={switchModal} className="my-10">
+        Crea un nuevo usuario
+      </Button>
       <Modal show={openModal} size="md" onClose={handleClose} popup>
         <ModalHeader />
         <ModalBody>

@@ -1,6 +1,7 @@
 import { configureStore, type Middleware } from "@reduxjs/toolkit";
-import usersReducer from "./users/slice";
+import usersReducer, { setUsers } from "./users/slice";
 import formReducer from "./form/slice";
+import userServices from "../services/users";
 
 const persistanceLocalStorageMiddleWare: Middleware =
   (store) => (next) => (action) => {
@@ -12,6 +13,10 @@ export const store = configureStore({
   reducer: { users: usersReducer, form: formReducer },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(persistanceLocalStorageMiddleWare),
+});
+
+userServices.getAll().then((users) => {
+  store.dispatch(setUsers(users));
 });
 
 export type RootState = ReturnType<typeof store.getState>;

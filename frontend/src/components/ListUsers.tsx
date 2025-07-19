@@ -12,11 +12,10 @@ export function ListUsers() {
   const users = useAppSelector((state) => state.users);
 
   return (
-    <div className="mt-4 w-full overflow-x-auto">
+    <div className="w-full overflow-x-auto">
       <Table>
         <TableHead>
           <TableRow>
-            <TableHeadCell>Id</TableHeadCell>
             <TableHeadCell>Nombre</TableHeadCell>
             <TableHeadCell>Email</TableHeadCell>
             <TableHeadCell>Acciones</TableHeadCell>

@@ -14,11 +14,8 @@ function User({ user }: { user: UserWithId }) {
   };
   return (
     <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
-      <TableCell className="font-medium whitespace-nowrap text-gray-900 dark:text-white">
-        {user.id}
-      </TableCell>
       <TableCell>
-        <div className="ite flex items-center gap-1.5">
+        <div className="flex items-center gap-1.5">
           <img
             className={"aspect-square w-8 rounded-full"}
             src={`https://unavatar.io/github/${user.github}`}
